@@ -6,6 +6,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -185,6 +186,7 @@ class _MobileYoutubePlayerState extends State<RawYoutubePlayer>
             controller.add(
               controller.value.copyWith(isReady: true),
             );
+            controller.play();
           }
         },
       )
@@ -193,6 +195,11 @@ class _MobileYoutubePlayerState extends State<RawYoutubePlayer>
         callback: (args) {
           switch (args.first as int) {
             case -1:
+              controller.hideTopMenu();
+              controller.hidePauseOverlay();
+              controller.hideCaptionWindow();
+              controller.hideEndCards();
+              // controller.requestFullScreen();
               controller.add(
                 controller.value.copyWith(
                   playerState: PlayerState.unStarted,
@@ -206,8 +213,11 @@ class _MobileYoutubePlayerState extends State<RawYoutubePlayer>
                   playerState: PlayerState.ended,
                 ),
               );
+              controller.hideEndCards();
               break;
             case 1:
+              controller.hideCaptionWindow();
+              controller.hideEndCards();
               controller.add(
                 controller.value.copyWith(
                   playerState: PlayerState.playing,
@@ -217,6 +227,7 @@ class _MobileYoutubePlayerState extends State<RawYoutubePlayer>
               );
               break;
             case 2:
+              controller.hideCaptionWindow();
               controller.add(
                 controller.value.copyWith(
                   playerState: PlayerState.paused,
@@ -224,6 +235,8 @@ class _MobileYoutubePlayerState extends State<RawYoutubePlayer>
               );
               break;
             case 3:
+              controller.hideCaptionWindow();
+              controller.hideEndCards();
               controller.add(
                 controller.value.copyWith(
                   playerState: PlayerState.buffering,
@@ -293,6 +306,22 @@ class _MobileYoutubePlayerState extends State<RawYoutubePlayer>
 
   String get player => '''
     <!DOCTYPE html>
+    <html>
+    <head>
+        <style>
+            html,
+            body {
+                margin: 0;
+                padding: 0;
+                background-color: #000000;
+                overflow: hidden;
+                position: fixed;
+                height: 100%;
+                width: 100%;
+            }
+        </style>
+        <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>
+    </head>
     <body>
          ${youtubeIFrameTag(controller)}
         <script>
@@ -339,6 +368,7 @@ class _MobileYoutubePlayerState extends State<RawYoutubePlayer>
             $youtubeIFrameFunctions
         </script>
     </body>
+    </html>
   ''';
 
   String get userAgent => !controller.params.desktopMode

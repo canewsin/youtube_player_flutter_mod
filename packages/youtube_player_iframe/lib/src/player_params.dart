@@ -153,7 +153,7 @@ class YoutubePlayerParams {
     this.autoPlay = true,
     this.mute = false,
     this.captionLanguage = 'en',
-    this.enableCaption = true,
+    this.enableCaption = false,
     this.color = 'white',
     this.showControls = true,
     this.enableKeyboard = kIsWeb,

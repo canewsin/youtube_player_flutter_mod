@@ -1,5 +1,26 @@
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
+final _defaultParams = <String, String>{
+  'autoplay': '0',
+  'mute': '0',
+  'cc_load_policy': '0',
+  'color': 'white',
+  'controls': '1',
+  'disablekb': '0',
+  'enablejsapi': '0',
+  'end': '0',
+  'fs': '1',
+  'hl': 'en',
+  'iv_load_policy': '1',
+  'loop': '0',
+  'modestbranding': '1',
+  'playsinline': '0',
+  'start': '0',
+  'rel': '0',
+  'showinfo': '0',
+  'cc_lang_pref': 'en',
+};
+
 ///
 String youtubeIFrameTag(YoutubePlayerController controller) {
   final params = <String, String>{
@@ -25,6 +46,9 @@ String youtubeIFrameTag(YoutubePlayerController controller) {
     if (controller.params.playlist.isNotEmpty)
       'playlist': '${controller.params.playlist.join(',')}'
   };
+
+  params.removeWhere((key, value) => params[key] == _defaultParams[key]);
+
   final youtubeAuthority = controller.params.privacyEnhanced
       ? 'www.youtube-nocookie.com'
       : 'www.youtube.com';
@@ -118,10 +142,37 @@ function isMuted() {
 }
 function hideTopMenu() {
   try { document.querySelector('#player').contentDocument.querySelector('.ytp-chrome-top').style.display = 'none'; } catch(e) { }
+  try { document.querySelector('#player').contentDocument.querySelector('.ytp-watermark').style.display = 'none'; } catch(e) { }
   return '';
 }
 function hidePauseOverlay() {
   try { document.querySelector('#player').contentDocument.querySelector('.ytp-pause-overlay').style.display = 'none'; } catch(e) { }
+  return '';
+}
+function requestFullScreen() {
+  try { 
+    var e = document.getElementById("video-wrapper");
+    if (e.requestFullscreen) {
+        e.requestFullscreen();
+    } else if (e.webkitRequestFullscreen) {
+        e.webkitRequestFullscreen();
+    } else if (e.mozRequestFullScreen) {
+        e.mozRequestFullScreen();
+    } else if (e.msRequestFullscreen) {
+        e.msRequestFullscreen();
+    }
+  } catch(e) { 
+    window.flutter_inappwebview.callHandler('Errors', e.data);
+  }
+  return '';
+}
+function hideCaptionWindow() {
+  try { document.querySelector('#player').contentDocument.querySelector('.ytp-caption-window-container').style.display = 'none'; } catch(e) { }
+  return '';
+}
+function hideEndCards() {
+  try { document.querySelector('#player').contentDocument.querySelector('.html5-endscreen').style.display = 'none'; } catch(e) { }
+  try { document.querySelector('#player').contentDocument.querySelector('.ytp-player-content').style.display = 'none'; } catch(e) { }
   return '';
 }
 ''';

@@ -71,7 +71,8 @@ class _YoutubePlayerBuilderState extends State<YoutubePlayerBuilder>
           final controller = widget.player.controller;
           if (controller.value.isFullScreen) {
             widget.player.controller.toggleFullScreenMode();
-            return false;
+            SystemChrome.setPreferredOrientations(
+                [DeviceOrientation.portraitUp]);
           }
           return true;
         },

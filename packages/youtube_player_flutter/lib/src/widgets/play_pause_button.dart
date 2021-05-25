@@ -107,3 +107,48 @@ class _PlayPauseButtonState extends State<PlayPauseButton>
         );
   }
 }
+
+/// A widget to display play/pause button.
+class SeekButton extends StatelessWidget {
+  final YoutubePlayerController _controller;
+  final bool _isForwardButton;
+  // ignore: public_member_api_docs
+  const SeekButton(
+    this._controller,
+    // ignore: avoid_positional_boolean_parameters
+    this._isForwardButton,
+  );
+  @override
+  Widget build(BuildContext context) {
+    _isForwardButton;
+    final _playerState = _controller.value.playerState;
+    if ((!_controller.flags.autoPlay && _controller.value.isReady) ||
+        _playerState == PlayerState.playing ||
+        _playerState == PlayerState.paused) {
+      return Visibility(
+        visible: _playerState == PlayerState.cued ||
+            !_controller.value.isPlaying ||
+            _controller.value.isControlsVisible,
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(50.0),
+            onTap: () => _isForwardButton
+                ? _controller.seekTo(
+                    _controller.value.position + const Duration(seconds: 30))
+                : _controller.seekTo(
+                    _controller.value.position - const Duration(seconds: 30)),
+            child: Icon(
+              _isForwardButton
+                  ? Icons.skip_next_rounded
+                  : Icons.skip_previous_rounded,
+              color: Colors.white,
+              size: 60.0,
+            ),
+          ),
+        ),
+      );
+    }
+    return const SizedBox();
+  }
+}

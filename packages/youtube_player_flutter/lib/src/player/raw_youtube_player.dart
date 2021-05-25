@@ -123,6 +123,10 @@ class _RawYoutubePlayerState extends State<RawYoutubePlayer>
               callback: (args) {
                 switch (args.first as int) {
                   case -1:
+                    controller!.hideTopMenu();
+                    controller!.hidePauseOverlay();
+                    controller!.hideCaptionWindow();
+                    controller!.hideEndCards();
                     controller!.updateValue(
                       controller!.value.copyWith(
                         playerState: PlayerState.unStarted,
@@ -137,6 +141,7 @@ class _RawYoutubePlayerState extends State<RawYoutubePlayer>
                         playerState: PlayerState.ended,
                       ),
                     );
+                    controller!.hideEndCards();
                     break;
                   case 1:
                     controller!.updateValue(
@@ -147,6 +152,7 @@ class _RawYoutubePlayerState extends State<RawYoutubePlayer>
                         errorCode: 0,
                       ),
                     );
+                    controller!.hideCaptionWindow();
                     break;
                   case 2:
                     controller!.updateValue(
@@ -155,6 +161,9 @@ class _RawYoutubePlayerState extends State<RawYoutubePlayer>
                         isPlaying: false,
                       ),
                     );
+                    controller!.hideCaptionWindow();
+                    controller!.hidePauseOverlay();
+                    controller!.hideEndCards();
                     break;
                   case 3:
                     controller!.updateValue(
@@ -162,6 +171,7 @@ class _RawYoutubePlayerState extends State<RawYoutubePlayer>
                         playerState: PlayerState.buffering,
                       ),
                     );
+                    controller!.hideCaptionWindow();
                     break;
                   case 5:
                     controller!.updateValue(
@@ -378,7 +388,49 @@ class _RawYoutubePlayerState extends State<RawYoutubePlayer>
                 player.setPlaybackRate(rate);
                 return '';
             }
-
+            
+            function hideTopMenu() {
+              try { document.querySelector('#player').contentDocument.querySelector('.ytp-chrome-top').style.display = 'none'; } catch(e) { 
+                window.flutter_inappwebview.callHandler('Errors', e.data); 
+              }
+              try { document.querySelector('#player').contentDocument.querySelector('.ytp-watermark').style.display = 'none'; } catch(e) { 
+                window.flutter_inappwebview.callHandler('Errors', e.data); 
+              }
+              return '';
+            }
+            function hidePauseOverlay() {
+              try { document.querySelector('#player').contentDocument.querySelector('.ytp-pause-overlay').style.display = 'none'; } catch(e) { 
+                window.flutter_inappwebview.callHandler('Errors', e.data); 
+              }
+              return '';
+            }
+            function requestFullScreen() {
+                var e = document.getElementById("video-wrapper");
+                if (e.requestFullscreen) {
+                    e.requestFullscreen();
+                } else if (e.webkitRequestFullscreen) {
+                    e.webkitRequestFullscreen();
+                } else if (e.mozRequestFullScreen) {
+                    e.mozRequestFullScreen();
+                } else if (e.msRequestFullscreen) {
+                    e.msRequestFullscreen();
+                }
+            }
+            function hideCaptionWindow() {
+              try { document.querySelector('#player').contentDocument.querySelector('.ytp-caption-window-container').style.display = 'none'; } catch(e) { 
+                window.flutter_inappwebview.callHandler('Errors', e.data); 
+              }
+              return '';
+            }
+            function hideEndCards() {
+              try { document.querySelector('#player').contentDocument.querySelector('.html5-endscreen').style.display = 'none'; } catch(e) { 
+                window.flutter_inappwebview.callHandler('Errors', e.data); 
+              }
+              try { document.querySelector('#player').contentDocument.querySelector('.ytp-player-content').style.display = 'none'; } catch(e) {
+                window.flutter_inappwebview.callHandler('Errors', e.data); 
+              }
+              return '';
+            }
             function setTopMargin(margin) {
                 document.getElementById("player").style.marginTop = margin;
                 return '';
@@ -388,7 +440,7 @@ class _RawYoutubePlayerState extends State<RawYoutubePlayer>
     </html>
   ''';
 
-  String boolean({required bool value}) => value == true ? "'1'" : "'0'";
+  int boolean({required bool value}) => value == true ? 1 : 0;
 
   String get userAgent => controller!.flags.forceHD
       ? 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36'

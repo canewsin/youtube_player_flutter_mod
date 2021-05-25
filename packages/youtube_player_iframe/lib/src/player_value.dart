@@ -15,7 +15,7 @@ class YoutubePlayerValue {
     this.hasPlayed = false,
     this.position = const Duration(),
     this.buffered = 0.0,
-    this.isFullScreen = false,
+    this.isFullScreen = true,
     this.volume = 100,
     this.playerState = PlayerState.unknown,
     this.playbackRate = PlaybackRate.normal,

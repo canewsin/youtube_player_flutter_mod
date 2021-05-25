@@ -234,6 +234,18 @@ class YoutubePlayerController extends ValueNotifier<YoutubePlayerValue> {
   /// Un mutes the player.
   void unMute() => _callMethod('unMute()');
 
+  /// hideTopMenu of the player.
+  void hideTopMenu() => _callMethod('hideTopMenu()');
+
+  /// hidePauseOverlay of the player.
+  void hidePauseOverlay() => _callMethod('hidePauseOverlay()');
+
+  /// hideCaptionWindow of the player.
+  void hideCaptionWindow() => _callMethod('hideCaptionWindow()');
+
+  /// hideEndCards of the player.
+  void hideEndCards() => _callMethod('hideEndCards()');
+
   /// Sets the volume of player.
   /// Max = 100 , Min = 0
   void setVolume(int volume) => volume >= 0 && volume <= 100

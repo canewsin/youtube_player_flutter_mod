@@ -279,6 +279,24 @@ class YoutubePlayerController extends Stream<YoutubePlayerValue>
   /// Might violates Youtube's TOS. Use at your own risk.
   void hidePauseOverlay() => invokeJavascript('hidePauseOverlay()');
 
+  void hideCaptionWindow() => invokeJavascript('hideCaptionWindow()');
+
+  void hideEndCards() => invokeJavascript('hideEndCards()');
+
+  // void requestFullScreen() => invokeJavascript('requestFullScreen()');
+
+  /// Toggles the player's full screen mode.
+  // void toggleFullScreenMode() {
+  //   if (value.isFullScreen) {
+  //     SystemChrome.setPreferredOrientations([
+  //       DeviceOrientation.landscapeLeft,
+  //       DeviceOrientation.landscapeRight,
+  //     ]);
+  //   } else {
+  //     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  //   }
+  // }
+
   /// MetaData for the currently loaded or cued video.
   YoutubeMetaData get metadata => _value.metaData;
 

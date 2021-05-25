@@ -399,7 +399,14 @@ class _YoutubePlayerState extends State<YoutubePlayer> {
           ],
           if (!controller.flags.hideControls)
             Center(
-              child: PlayPauseButton(),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SeekButton(widget.controller, false),
+                  PlayPauseButton(),
+                  SeekButton(widget.controller, true),
+                ],
+              ),
             ),
           if (controller.value.hasError) errorWidget,
         ],

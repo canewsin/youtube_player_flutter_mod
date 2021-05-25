@@ -27,6 +27,7 @@ class PlayPauseButtonBar extends StatelessWidget {
               ),
               onPressed: value.isReady
                   ? () {
+                      context.ytController.requestFullScreen();
                       value.playerState == PlayerState.playing
                           ? context.ytController.pause()
                           : context.ytController.play();

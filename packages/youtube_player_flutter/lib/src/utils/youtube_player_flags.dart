@@ -83,7 +83,7 @@ class YoutubePlayerFlags {
     this.isLive = false,
     this.hideThumbnail = false,
     this.disableDragSeek = false,
-    this.enableCaption = true,
+    this.enableCaption = false,
     this.captionLanguage = 'en',
     this.loop = false,
     this.forceHD = false,
