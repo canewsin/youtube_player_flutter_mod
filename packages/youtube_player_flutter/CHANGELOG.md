@@ -1,3 +1,27 @@
+## 9.0.4
+* Fixes related to fullscreen toggle.
+
+## 9.0.3
+* Fixes issue where loading indicator would always show.
+* Updates the default color of the progress indicator to be primary container color.
+
+## 9.0.2
+* Fixes issue with getting error logs even after disposing player.
+
+## 9.0.1
+* Fixes issue with fullscreen pop.
+
+## 9.0.0
+* Bumps `flutter_inappwebview` to latest version.
+
+## 8.1.2
+* Bumps `flutter_inappwebview` to latest version.
+* Adds support for extracting video id from YouTube Shorts & Music URL.
+
+## 8.1.1
+* Bumps `flutter_inappwebview` to latest version.
+* Fixed cast error in YouTube error.
+
 ## 8.1.0
 * Upgraded minimum flutter version to `3.0.0`
 * Upgraded example app

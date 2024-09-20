@@ -2,18 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
-import 'package:youtube_player_iframe/src/controller.dart';
+import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 /// Defines player parameters for [YoutubePlayer].
 class YoutubePlayerParams {
-  /// Specifies whether the initial video will automatically start to play when the player loads.
-  ///
-  /// Default is true.
-  ///
-  /// Note: auto play might not always work on mobile devices.
-  final bool autoPlay;
-
   /// Mutes the player.
   ///
   /// Default is false.
@@ -31,6 +26,11 @@ class YoutubePlayerParams {
   ///
   /// Default is true.
   final bool enableCaption;
+
+  /// Defines whether or not the player reacts to pointer events.
+  ///
+  /// See the [Mozilla Docs](https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events) for detail.
+  final PointerEvents pointerEvents;
 
   /// This parameter specifies the color that will be used in the player's video progress bar to highlight the amount of the video that the viewer has already seen.
   /// Valid parameter values are red and white, and, by default, the player uses the color red in the video progress bar.
@@ -65,13 +65,6 @@ class YoutubePlayerParams {
   /// Default true.
   final bool enableJavaScript;
 
-  /// This parameter specifies the time, measured in seconds from the start of the video,
-  /// when the player should stop playing the video.
-  ///
-  /// Note that the time is measured from the beginning of the video and not from either the value of the start player parameter or the startSeconds parameter,
-  /// which is used in YouTube Player API functions for loading or queueing a video.
-  final Duration? endAt;
-
   /// Setting this parameter to false prevents the fullscreen button from displaying in the player.
   ///
   /// Default false.
@@ -102,13 +95,7 @@ class YoutubePlayerParams {
   /// This parameter provides an extra security measure for the IFrame API and is only supported for IFrame embeds.
   ///
   /// Specify your domain as the value.
-  final String origin;
-
-  /// This parameter specifies a list of video IDs to play.
-  ///
-  /// If you specify a value, the first video that plays will be the [YoutubePlayerController.initialVideoId],
-  /// and the videos specified in the playlist parameter will play thereafter.
-  final List<String> playlist;
+  final String? origin;
 
   /// This parameter controls whether videos play inline or fullscreen in an HTML5 player on iOS.
   ///
@@ -120,56 +107,79 @@ class YoutubePlayerParams {
   /// Default is false.
   final bool strictRelatedVideos;
 
-  /// This parameter causes the player to begin playing the video at the given number of seconds from the start of the video.
-  ///
-  /// Note that similar to the [YoutubePlayerController.seekTo] function,
-  /// the player will look for the closest keyframe to the time you specify.
-  /// This means that sometimes the play head may seek to just before the requested time, usually no more than around two seconds.
-  final Duration startAt;
+  /// The user agent for the player.
+  final String? userAgent;
 
-  /// Enabling desktop mode.
-  ///
-  /// The player controls will be like the one seen on youtube.com
-  ///
-  /// Only effective on mobile devices.
-  final bool desktopMode;
-
-  /// Enables privacy enhanced embedding mode.
-  ///
-  /// More detail at https://support.google.com/youtube/answer/171780?hl=en
-  ///
-  /// Default is false.
-  final bool privacyEnhanced;
-
-  /// Set to `true` to enable Flutter's new Hybrid Composition. The default value is `true`.
-  /// Hybrid Composition is supported starting with Flutter v1.20+.
-  ///
-  /// **NOTE**: It is recommended to use Hybrid Composition only on Android 10+ for a release app,
-  /// as it can cause framerate drops on animations in Android 9 and lower (see [Hybrid-Composition#performance](https://github.com/flutter/flutter/wiki/Hybrid-Composition#performance)).
-  final bool useHybridComposition;
-
-  /// Defines player parameters for [YoutubePlayer].
+  /// Defines player parameters for the youtube player.
   const YoutubePlayerParams({
-    this.autoPlay = true,
     this.mute = false,
     this.captionLanguage = 'en',
     this.enableCaption = true,
+    this.pointerEvents = PointerEvents.initial,
     this.color = 'white',
     this.showControls = true,
     this.enableKeyboard = kIsWeb,
     this.enableJavaScript = true,
-    this.endAt,
     this.showFullscreenButton = false,
     this.interfaceLanguage = 'en',
     this.showVideoAnnotations = true,
     this.loop = false,
     this.origin = 'https://www.youtube.com',
-    this.playlist = const [],
     this.playsInline = true,
     this.strictRelatedVideos = false,
-    this.startAt = Duration.zero,
-    this.desktopMode = false,
-    this.privacyEnhanced = false,
-    this.useHybridComposition = true,
+    this.userAgent,
   });
+
+  /// Creates [Map] representation of [YoutubePlayerParams].
+  Map<String, dynamic> toMap() {
+    return {
+      'autoplay': 1,
+      'mute': _boolean(mute),
+      'cc_lang_pref': captionLanguage,
+      'cc_load_policy': _boolean(enableCaption),
+      'color': color,
+      'controls': _boolean(showControls),
+      'disablekb': _boolean(!enableKeyboard),
+      'enablejsapi': _boolean(enableJavaScript),
+      'fs': _boolean(showFullscreenButton),
+      'hl': interfaceLanguage,
+      'iv_load_policy': showVideoAnnotations ? 1 : 3,
+      'loop': _boolean(loop),
+      'modestbranding': '1',
+      if (kIsWeb) ...{
+        'origin': Uri.base.origin,
+        'widget_referrer': Uri.base.origin,
+      } else if (origin != null) ...{
+        'origin': origin,
+        'widget_referrer': origin,
+      },
+      'playsinline': _boolean(playsInline),
+      'rel': _boolean(!strictRelatedVideos),
+    };
+  }
+
+  /// The serialized JSON representation of the [YoutubePlayerParams].
+  String toJson() => jsonEncode(toMap());
+
+  int _boolean(bool value) => value ? 1 : 0;
+}
+
+/// The pointer events.
+enum PointerEvents {
+  /// The player reacts to pointer events, like hover and click.
+  auto('auto'),
+
+  /// The initial configuration for pointer event.
+  ///
+  /// In most cases, this resolves to [PointerEvents.auto].
+  initial('initial'),
+
+  /// The player does not react to any pointer events.
+  none('none');
+
+  /// Creates a [PointerEvents] for the [name].
+  const PointerEvents(this.name);
+
+  /// The name of the [PointerEvents].
+  final String name;
 }

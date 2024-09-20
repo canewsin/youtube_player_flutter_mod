@@ -7,6 +7,8 @@ import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 ///
 class PlayerStateSection extends StatelessWidget {
+  const PlayerStateSection({super.key});
+
   @override
   Widget build(BuildContext context) {
     return YoutubeValueBuilder(
@@ -15,7 +17,7 @@ class PlayerStateSection extends StatelessWidget {
           duration: const Duration(milliseconds: 800),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20.0),
-            color: _getStateColor(value.playerState).withAlpha(50),
+            color: _getStateColor(value.playerState),
           ),
           width: double.infinity,
           padding: const EdgeInsets.all(8.0),
